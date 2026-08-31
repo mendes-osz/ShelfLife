@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +22,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items as itemsGrade
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -35,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -53,15 +61,23 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = { BarraNavegacao() }
                 ) { innerPadding ->
-                    TelaPerfil(modifier = Modifier.padding(innerPadding))
+                    TelaInicio(modifier = Modifier.padding(innerPadding))
+                    //TelaPerfil(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
 
+private val CorFundo = Color(0xFF4E3B31)
+private val CorCartao = Color(0xFF3A2C24)
+private val CorTextoSecundario = Color(0xFFB0A79E)
+private val CorDestaque = Color(0xFFC08552)
+
 data class Livro(val id: Int, val titulo: String)
 data class Amigo(val id: Int, val nome: String, val emoji: String)
+data class LivroHome(val id: Int, val titulo: String, @DrawableRes val imagemRes: Int? = null)
+data class AmigoHome(val id: Int, val nome: String, @DrawableRes val imagemRes: Int? = null, val emoji: String = "🙂")
 
 @Preview(showBackground = true)
 @Composable
@@ -274,6 +290,219 @@ fun ItemAmigo(amigo: Amigo) {
             }
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = amigo.nome, color = Color.White, fontSize = 12.sp)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TelaInicio(modifier: Modifier = Modifier) {
+
+    val livros = remember {
+        listOf(
+            LivroHome(0, "1984", imagemRes = R.drawable.livro_1984),
+            LivroHome(1, "O Código Da Vinci", imagemRes = R.drawable.o_codigo_da_vinci),
+            LivroHome(2, "Labirinto do Fauno", imagemRes = R.drawable.labirinto_do_fauno),
+            LivroHome(3, "Um Conto para Ser Tempo", imagemRes = R.drawable.um_conto_para_ser_tempo),
+            LivroHome(4, "O Sol e a Estrela", imagemRes = R.drawable.o_sol_e_a_estrela),
+            LivroHome(5, "Enterrem Nossos Ossos à Meia-Noite", imagemRes = R.drawable.enterrem_nossos_ossos)
+        )
+    }
+
+    val ranking = remember {
+        listOf(
+            AmigoHome(0, "Nome", R.drawable.amigo_0),
+            AmigoHome(1, "Nome", R.drawable.amigo_1),
+            AmigoHome(2, "Nome", R.drawable.amigo_2),
+            AmigoHome(3, "Nome", R.drawable.amigo_3)
+        )
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .background(CorFundo)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        CartaoResumoUsuario(nome = "Nome", minutosHoje = 25, imagemRes = R.drawable.usuario)
+
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(modifier = Modifier.weight(1.4f)) {
+                Text(
+                    text = "Livros Principais",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                GradeLivrosPrincipais(livros = livros)
+                Spacer(modifier = Modifier.height(12.dp))
+                BotaoAdicionarLivro()
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Ranking",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                PreviaRanking(ranking = ranking)
+            }
+        }
+    }
+}
+
+@Composable
+private fun CartaoResumoUsuario(
+    nome: String,
+    minutosHoje: Int,
+    @DrawableRes imagemRes: Int? = null,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(CorCartao)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(56.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(Color.DarkGray),
+            contentAlignment = Alignment.Center
+        ) {
+            if (imagemRes != null) {
+                Image(
+                    painter = painterResource(id = imagemRes),
+                    contentDescription = "Foto de perfil",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Text(text = "🙂", fontSize = 26.sp)
+            }
+        }
+        Column {
+            Text(text = nome, color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Hoje: $minutosHoje min lidos",
+                color = CorTextoSecundario,
+                fontSize = 13.sp
+            )
+        }
+    }
+}
+
+@Composable
+private fun GradeLivrosPrincipais(livros: List<LivroHome>) {
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(CorCartao)
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(40.dp)
+    ) {
+        itemsGrade(livros, key = { it.id }) { livro ->
+            CapaLivro(livro = livro, modifier = Modifier.width(80.dp))
+        }
+    }
+}
+
+@Composable
+private fun CapaLivro(livro: LivroHome, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .aspectRatio(0.72f)
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color(0xFF6B4F3F)),
+        contentAlignment = Alignment.Center
+    ) {
+        if (livro.imagemRes != null) {
+            Image(
+                painter = painterResource(id = livro.imagemRes),
+                contentDescription = "Capa de ${livro.titulo}",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+            )
+        } else {
+            Text(text = "📖", fontSize = 22.sp)
+        }
+    }
+}
+
+@Composable
+private fun BotaoAdicionarLivro() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(CorCartao)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "Adicionar um livro novo",
+            color = CorDestaque,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Text(text = "🔍", fontSize = 18.sp)
+    }
+}
+
+@Composable
+private fun PreviaRanking(ranking: List<AmigoHome>) {
+    val coresPosicao = listOf(
+        Color(0xFF2E2E2E),
+        Color(0xFFC49A93),
+        Color(0xFF8B3A2B),
+        Color(0xFF7A5C55)
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(CorCartao)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        ranking.forEachIndexed { indice, amigo ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(coresPosicao.getOrElse(indice) { CorCartao }),
+                contentAlignment = Alignment.Center
+            ) {
+                if (amigo.imagemRes != null) {
+                    Image(
+                        painter = painterResource(id = amigo.imagemRes),
+                        contentDescription = "Foto de ${amigo.nome}",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(10.dp))
+                    )
+                } else {
+                    Text(text = amigo.emoji, fontSize = 26.sp)
+                }
+            }
         }
     }
 }
