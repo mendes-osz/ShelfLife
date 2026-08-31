@@ -1,3 +1,5 @@
+<img width="1600" height="1600" alt="WhatsApp Image 2026-08-26 at 17 29 43" src="https://github.com/user-attachments/assets/f130bdeb-6b7f-4c46-a2a3-9e2e6b619efd" />
+
 # LifeShelf
 
 Aplicativo Android desenvolvido em Kotlin, como trabalho da disciplina. O LifeShelf permite acompanhar o progresso de leitura de vários livros ao mesmo tempo, mostrando quanto tempo de vida foi dedicado à leitura, além de contar com ranking global/de amigos e sistema de nível.
