@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items as itemsGrade
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -61,8 +63,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = { BarraNavegacao() }
                 ) { innerPadding ->
-                    TelaInicio(modifier = Modifier.padding(innerPadding))
+                    //TelaInicio(modifier = Modifier.padding(innerPadding))
                     //TelaPerfil(modifier = Modifier.padding(innerPadding))
+                    TelaEstante(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -73,6 +76,7 @@ private val CorFundo = Color(0xFF4E3B31)
 private val CorCartao = Color(0xFF3A2C24)
 private val CorTextoSecundario = Color(0xFFB0A79E)
 private val CorDestaque = Color(0xFFC08552)
+private val CorPlaceholder = Color(0xFF6B4F3F)
 
 data class Livro(val id: Int, val titulo: String)
 data class Amigo(val id: Int, val nome: String, val emoji: String)
@@ -502,6 +506,89 @@ private fun PreviaRanking(ranking: List<AmigoHome>) {
                 } else {
                     Text(text = amigo.emoji, fontSize = 26.sp)
                 }
+            }
+        }
+    }
+}
+
+// ── TELA ESTANTE ──────────────────────────────────────────────────────────────
+
+@Preview(showBackground = true)
+@Composable
+fun TelaEstante(modifier: Modifier = Modifier) {
+    val livros = remember {
+        listOf(
+            LivroHome(0,  "Enterrem Nossos Ossos à Meia-Noite", R.drawable.enterrem_nossos_ossos),
+            LivroHome(1,  "Ser Tempo",                          R.drawable.um_conto_para_ser_tempo),
+            LivroHome(2,  "1984",                               R.drawable.livro_1984),
+            LivroHome(3,  "O Sol e a Estrela",                  R.drawable.o_sol_e_a_estrela),
+            LivroHome(4,  "Labirinto do Fauno",                 R.drawable.labirinto_do_fauno),
+            LivroHome(5,  "O Código Da Vinci",                  R.drawable.o_codigo_da_vinci),
+            LivroHome(6,  "1793",                               null),
+            LivroHome(7,  "Os Lutos Quânticos",                 null),
+            LivroHome(8,  "A Cidade Azul",                      null),
+            LivroHome(9,  "Battle Royale",                      null),
+            LivroHome(10, "Taverna",                            null),
+            LivroHome(11, "Assassinato Express do Oriente",     null),
+        )
+    }
+
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(CorFundo)
+    ) {
+        Text(
+            text = "Shelf",
+            color = Color.White,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)
+        )
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            itemsGrade(livros, key = { it.id }) { livro ->
+                ItemLivroEstante(livro = livro)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ItemLivroEstante(livro: LivroHome) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(0.67f)
+            .clip(RoundedCornerShape(8.dp))
+            .background(CorPlaceholder),
+        contentAlignment = Alignment.Center
+    ) {
+        if (livro.imagemRes != null) {
+            Image(
+                painter = painterResource(id = livro.imagemRes),
+                contentDescription = livro.titulo,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "📖", fontSize = 26.sp)
+                Text(
+                    text = livro.titulo,
+                    color = Color.White.copy(alpha = 0.7f),
+                    fontSize = 9.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
             }
         }
     }
