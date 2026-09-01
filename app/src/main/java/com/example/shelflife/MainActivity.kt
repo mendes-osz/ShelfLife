@@ -497,10 +497,21 @@ private fun BotaoAdicionarLivro(aoAdicionar: (String) -> Unit) {
         Button(
             onClick = {
                 if (novoLivro.isNotBlank()) {
-                    Toast.makeText(context, "Livro \"$novoLivro\" adicionado!", Toast.LENGTH_SHORT).show()
+                    aoAdicionar(novoLivro)
+
+                    Toast.makeText(
+                        context,
+                        "Livro \"$novoLivro\" adicionado!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
                     novoLivro = ""
                 } else {
-                    Toast.makeText(context, "Digite o nome de um livro.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Digite o nome de um livro.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             },
             colors = ButtonDefaults.buttonColors(
@@ -640,3 +651,4 @@ private fun ItemLivroEstante(livro: LivroHome) {
         }
     }
 }
+
