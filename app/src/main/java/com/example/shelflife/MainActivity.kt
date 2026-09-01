@@ -567,7 +567,8 @@ private fun ItemLivroEstante(livro: LivroHome) {
             .fillMaxWidth()
             .aspectRatio(0.67f)
             .clip(RoundedCornerShape(8.dp))
-            .background(CorPlaceholder),
+            .background(CorPlaceholder)
+            .clickable{ },
         contentAlignment = Alignment.Center
     ) {
         if (livro.imagemRes != null) {
